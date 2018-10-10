@@ -1,9 +1,21 @@
+
+Read connect to mqtt_server, as mqtt_client, and subscribe to mqtt_topic
+When a new numeric value is published in the topic, update the neopixel display to show it's value
+Value is represented by the number of pixels and the colour of the pixels
+
+"neopixel_pin" = the pin the neopixel display is connected to
+"pixels" = the number of pixels to use (there must be the same number of entries in "leds" as this
+"colours" = r, g, b values to be used for the pixels
+"leds" = the value at which each pixel starts (uses >= comparison) and the colour to use for each
+"max" = if this is reached then set all pixels to the specified colour
+
+config.json
 {
 	"mqtt_server" : "broker.mqttdashboard.com",
 	"mqtt_client" : "clientname",
 	"mqtt_topic" : "topic/topic",
 	"neopixel_pin" : 14,
-	"pixel_count" : 24,
+	"pixel_count" : 24
 	"colours" : {
 				"blue" : [0, 0, 32],
 				"green" : [0, 32, 0],

@@ -5,9 +5,10 @@ from urequests import get
 import ujson
 from utime import sleep
 from utime import sleep_ms
-from machine import Pin
+from machine import Pin, reset
 from neopixel import NeoPixel
 from umqtt.robust import MQTTClient
+
 
 # Define the colours
 led_off = (0, 0, 0)
@@ -25,7 +26,7 @@ client = MQTTClient(config["mqtt_client"], config["mqtt_server"])
 ############## Here we go then #################
 
 def goGauge():
-    spin_the_ring()  # just for fun we will spin the LEDs on the ring to show we're starting
+    spin_the_ring()  # just for fun we will spin the pixels on the ring to show we're starting
 
     client.set_callback(do_callback)
 
@@ -71,11 +72,11 @@ def neopixel_display(value):
     np.write()
     
     if value < config["max"]["max_value"]:
-        for i in range(0,24):
-            if value >= config["leds"][i]["min_val"]:
-                np[i] = (config["colours"][config["leds"][i]["colour"]][0],
-                         config["colours"][config["leds"][i]["colour"]][1],
-                         config["colours"][config["leds"][i]["colour"]][2])
+        for i in range(0,config["pixel_count"]):
+            if value >= config["pixels"][i]["min_val"]:
+                np[i] = (config["colours"][config["pixels"][i]["colour"]][0],
+                         config["colours"][config["pixels"][i]["colour"]][1],
+                         config["colours"][config["pixels"][i]["colour"]][2])
     else:
         for n in range(0,24):
             np[n] = (config["colours"][config["max"]["colour"]][0],
@@ -90,4 +91,9 @@ def neopixel_display(value):
 # If we are being run as a script then run
 if __name__ == '__main__':
     gc.enable()
-    goGauge()
+    try:
+        goGauge()
+    except:
+        print("something has gone wrong")
+        sleep(60)
+        reset()
