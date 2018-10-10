@@ -1,8 +1,8 @@
 {
-	"mqttserver" : "broker.mqttdashboard.com",
-	"mqttclient" : "clientname",
-	"mqtttopic" : "topic/topic",
-	"neopixelpin" : 14,
+	"mqtt_server" : "broker.mqttdashboard.com",
+	"mqtt_client" : "clientname",
+	"mqtt_topic" : "topic/topic",
+	"neopixel_pin" : 14,
 	"colours" : {
 				"blue" : [0, 0, 32],
 				"green" : [0, 32, 0],

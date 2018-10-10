@@ -50,21 +50,20 @@ def do_callback(topic, msg):
 
 def spin_the_ring():
     # If we are running on micropython then spin the LED's on the ring
-    if mp == True:
-        np.fill(led_off)
+    np.fill(led_off)
+    np.write()
+    for i in range(0, 24):
+        np[i] = (0, 0, 32) # blue
+        if i > 0:
+            np[i - 1] = (0, 32, 0) # green
+        if i > 1:
+            np[i - 2] = (32, 0, 0) # red
+        if i > 2:
+            np[i - 3] = led_off # off
         np.write()
-        for i in range(0, 24):
-            np[i] = (0, 0, 32) # blue
-            if i > 0:
-                np[i - 1] = (0, 32, 0) # green
-            if i > 1:
-                np[i - 2] = (32, 0, 0) # red
-            if i > 2:
-                np[i - 3] = led_off # off
-            np.write()
-            sleep_ms(50)
-        np.fill(led_off)
-        np.write()
+        sleep_ms(50)
+    np.fill(led_off)
+    np.write()
 
 
 def neopixel_display(value):
@@ -74,14 +73,14 @@ def neopixel_display(value):
     if value < config["max"]["max_value"]:
         for i in range(0,24):
             if value >= config["leds"][i]["min_val"]:
-                np[i] = (config["colours"][foo["leds"][i]["colour"]][0],
-                         config["colours"][foo["leds"][i]["colour"]][1],
-                         config["colours"][foo["leds"][i]["colour"]][2])
+                np[i] = (config["colours"][config["leds"][i]["colour"]][0],
+                         config["colours"][config["leds"][i]["colour"]][1],
+                         config["colours"][config["leds"][i]["colour"]][2])
     else:
         for n in range(0,24):
-            np[n] = (config["colours"][["max"]["colour"]][0],
-                     config["colours"][["max"]["colour"]][1],
-                     config["colours"][["max"]["colour"]][2])
+            np[n] = (config["colours"][config["max"]["colour"]][0],
+                     config["colours"][config["max"]["colour"]][1],
+                     config["colours"][config["max"]["colour"]][2])
         
     np.write()
 
