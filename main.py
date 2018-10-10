@@ -10,8 +10,11 @@ from neopixel import NeoPixel
 from umqtt.robust import MQTTClient
 
 
-# Define the colours
+# Define some basic colours
 led_off = (0, 0, 0)
+led_red = (32, 0, 0)
+led_green = (0, 32, 0)
+led_blue = (0, 0, 32)
 
 with open("./config.json") as fp:
     config = ujson.load(fp)
@@ -35,10 +38,12 @@ def goGauge():
         client.subscribe(config["mqtt_topic"])
 
     while 1:
-        client.wait_msg()
-        heartbeat.off()
+        client.check_msg()  # non-blocking check for new data
+        heartbeat.off()  # let people know we are still working
         sleep(1)
         heartbeat.on()
+        sleep(config["poll_interval"])
+        gc.collect()
 
 
 def do_callback(topic, msg):
@@ -54,13 +59,13 @@ def spin_the_ring():
     np.fill(led_off)
     np.write()
     for i in range(0, 24):
-        np[i] = (0, 0, 32) # blue
+        np[i] = led_blue
         if i > 0:
-            np[i - 1] = (0, 32, 0) # green
+            np[i - 1] = led_green
         if i > 1:
-            np[i - 2] = (32, 0, 0) # red
+            np[i - 2] = led_red
         if i > 2:
-            np[i - 3] = led_off # off
+            np[i - 3] = led_off
         np.write()
         sleep_ms(50)
     np.fill(led_off)
