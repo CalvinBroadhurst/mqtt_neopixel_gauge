@@ -1,8 +1,7 @@
 import gc
-import sys
 from math import trunc
-from urequests import get
 import ujson
+import network
 from utime import sleep
 from utime import sleep_ms
 from machine import Pin, reset
@@ -33,7 +32,7 @@ def goGauge():
 
     client.set_callback(do_callback)
 
-    if not client.connect(clean_session=False):
+    if not client.connect(clean_session=True):
         print("New session being set up")
         client.subscribe(config["mqtt_topic"])
 
@@ -42,7 +41,11 @@ def goGauge():
         heartbeat.off()  # let people know we are still working
         sleep(1)
         heartbeat.on()
-        sleep(config["poll_interval"])
+        sleep((config["poll_interval"] / 2) - 1)
+        heartbeat.off()  # let people know we are still working
+        sleep(1)
+        heartbeat.on()
+        sleep((config["poll_interval"] / 2) - 1)
         gc.collect()
 
 
@@ -96,9 +99,17 @@ def neopixel_display(value):
 # If we are being run as a script then run
 if __name__ == '__main__':
     gc.enable()
+    
+    sta_if = network.WLAN(network.STA_IF)
+
+    while not sta_if.isconnected():
+        print("Not connected to WiFi")
+        sleep(5)
+    
     try:
         goGauge()
-    except:
-        print("something has gone wrong")
-        sleep(60)
+    except Exception as e:
+        print("Something has gone horribly wrong")
+        print(e)
+        sleep(10)
         reset()
